@@ -6,7 +6,7 @@ import json
 def db_connection():
     conn = sqlite3.connect('87labs.db')
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS products (id INT PRIMARY KEY AUTOINCREMENT, name TEXT, height REAL, length REAL , width REAL, weight REAL, price REALT) ''')
+    c.execute('''CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, height REAL, length REAL , width REAL, weight REAL, price REALT) ''')
     conn.commit()
     return conn
 
@@ -14,8 +14,19 @@ class Default(Controller):
     def GET(self):
         conn = db_connection()
         c = conn.cursor()
-        products = c.execute('''SELECT * FROM products''').fetchall()
-
+        product_query = c.execute('''SELECT * FROM products''').fetchall()
+        products = []
+        for product in product_query:
+            dict_product ={
+                "name" : product[0],
+                "height": product[1],
+                "length": product[2],
+                "width": product[3],
+                "weight": product[4],
+                "price": product[5]
+            }
+            products.append(dict_product)
+        conn.close()
         return products
 
     def POST(self, **kwargs):
@@ -27,7 +38,8 @@ class Default(Controller):
         weight = kwargs['weight']
         price = kwargs['price']
         c = conn.cursor()
-        c.execute('''INSERT INTO products()''')
+        c.execute('''INSERT INTO products(name, height, length, width, weight, price) VALUES(?,?,?,?,?,?)''', [name, height, length, width, weight, price])
+        conn.commit()
         product = {
             'name': name,
             'height': height,
@@ -36,6 +48,7 @@ class Default(Controller):
             'weigth' : weight,
             'price' : price
         }
+        conn.close()
         return product
 
 
