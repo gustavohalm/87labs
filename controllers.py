@@ -1,5 +1,5 @@
 from endpoints import Controller
-from endpoints.decorators import param
+from endpoints.decorators import route
 import sqlite3
 import json
 
@@ -10,24 +10,44 @@ def db_connection():
     conn.commit()
     return conn
 
+
 class Default(Controller):
-    def GET(self):
+    @route(lambda req: len(req.path_args) == 0)
+    def GET_1(self):
         conn = db_connection()
         c = conn.cursor()
         product_query = c.execute('''SELECT * FROM products''').fetchall()
         products = []
         for product in product_query:
             dict_product ={
-                "name" : product[0],
-                "height": product[1],
-                "length": product[2],
-                "width": product[3],
-                "weight": product[4],
-                "price": product[5]
+                "id": product[0],
+                "name" : product[1],
+                "height": product[2],
+                "length": product[3],
+                "width": product[4],
+                "weight": product[5],
+                "price": product[6]
             }
             products.append(dict_product)
         conn.close()
         return products
+
+
+    @route(lambda req: len(req.path_args) == 1)
+    def GET_2(self, id):
+        conn = db_connection()
+        c = conn.cursor()
+        result = c.execute('''SELECT * FROM products WHERE id = ?''', [id,]).fetchone()
+        product = {
+            'id' : result[0],
+            'name' : result[1],
+            'height': result[2],
+            'length': result[3],
+            'width': result[4],
+            'weight': result[5],
+            'price': result[6]
+        }
+        return product
 
     def POST(self, **kwargs):
         conn = db_connection()
@@ -40,17 +60,29 @@ class Default(Controller):
         c = conn.cursor()
         c.execute('''INSERT INTO products(name, height, length, width, weight, price) VALUES(?,?,?,?,?,?)''', [name, height, length, width, weight, price])
         conn.commit()
+        p =c.lastrowid
         product = {
-            'name': name,
-            'height': height,
-            'length': length,
-            'width': width,
-            'weigth' : weight,
-            'price' : price
+            'id': p
         }
         conn.close()
         return product
 
 
 class Tax(Controller):
-    pass
+    def POST(self, **kwargs):
+        name = kwargs['name']
+        height = float(  kwargs['height'])
+        length = float( kwargs['length'])
+        width = float(kwargs['width'])
+        weight = float(kwargs['weight'])
+        price = float(kwargs['price'])
+        volume = height * length * width
+        peso = volume * 300
+
+        if peso <= 100:
+            tax = price * 0.05
+
+        else:
+            tax = peso * (weight/1000)
+
+        return { "tax" : tax,}
