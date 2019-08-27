@@ -1,5 +1,4 @@
-Teste de Python realizado para empres 87Labs
-
+Teste de Python
 Nescesário ter instalado Python 3.x e pip
 
 Para criação dos endpoints foi utilizado a bibliteca endpoints (https://github.com/Jaymon/endpoints) que utiliza o WSGI.
