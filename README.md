@@ -12,7 +12,7 @@ $ pip install endpoints
 Faça o clone do projeto
 
 <code>
-$ git clone https://github.com/gustavohalm/87labs.git
+$ git clone https://github.com/gustavohalm/product-tax.git
 </code>
 
 
@@ -20,7 +20,7 @@ $ git clone https://github.com/gustavohalm/87labs.git
 Agora é só acessar o o diretório 
 
 <code>
-$ cd 87labs
+$ cd product-tax
 </code>
 
 
